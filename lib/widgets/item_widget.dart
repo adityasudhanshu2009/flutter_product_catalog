@@ -18,7 +18,7 @@ class ItemWidget extends StatelessWidget {
           print("Item has been pressed"
           );
         },
-        leading: Image.network(item.imageurl,),
+        leading: Image.network(item.image,),
         title: Text(item.name,style: TextStyle(fontWeight: FontWeight.bold),textScaleFactor: 1.0,),
         subtitle: Text(item.desc),
         trailing: Text("\$${item.price}",

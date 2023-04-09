@@ -5,6 +5,7 @@ import 'dart:convert';
 import '../models/catalog.dart';
 import '../widgets/drawer.dart';
 import '../widgets/item_widget.dart';
+import 'package:velocity_x/velocity_x.dart';
 
 
 class HomePage extends StatefulWidget {
@@ -13,46 +14,40 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  final int days = 30;
-
-  final String name = "Codepur";
 
   @override
   void initState() {
     super.initState();
     loadData();
   }
-
-  Future loadData() async {
-    await Future.delayed(Duration(seconds: 2));
-    final catalogJson =
-        await rootBundle.loadString("assets/files/catalog.json");
-    final list = json.decode(catalogJson) as List<dynamic>;
-    return list.map((e) => CatalogModel.items).toList();
+  Future<void> loadData() async {
+    await Future.delayed(Duration(seconds: 1));
     
-    setState(() {});
+    final String catalogJson = await rootBundle.loadString("assets/files/catalog.json");
+    final decodedData=await json.decode(catalogJson);
+   // print(decodedData);
+    var _items=decodedData["products"];
+    CatalogModel.items= List.from(_items).map<Items>((item) => Items.fromjson(item)).toList();
+    setState(() {
+      
+    });
+      
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text("Catalog App"),
-      ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: (CatalogModel.items != null && CatalogModel.items.isNotEmpty)
-            ? ListView.builder(
-                itemCount: CatalogModel.items.length,
-                itemBuilder: (context, index) => ItemWidget(
-                  item: CatalogModel.items[index],
-                ),
-              )
-            : Center(
-                child: CircularProgressIndicator(),
-              ),
-      ),
-      drawer: MyDrawer(),
+       body:SafeArea(
+         child: Container(
+          padding: Vx.m20,
+           child: Column(
+            children: [
+              "Catalog App".text.xl3.bold.make(),
+              "Trending Products".text.xl2.make(),
+            ],
+           ),
+         ),
+       )
     );
   }
 }
