@@ -5,7 +5,10 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_product_catalog/Pages/detailed_page.dart';
+import 'package:flutter_product_catalog/core/store.dart';
+import 'package:flutter_product_catalog/models/cart_model.dart';
 import 'package:flutter_product_catalog/utils/routes.dart';
+import 'package:flutter_product_catalog/widgets/addToCart.dart';
 import 'package:flutter_product_catalog/widgets/theme.dart';
 import 'package:velocity_x/velocity_x.dart';
 
@@ -39,13 +42,17 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
+    final CartModel _cart=(VxState.store as MyStore).cart;
     return Scaffold(
       backgroundColor: MyTheme.creamcolor,
-      floatingActionButton: FloatingActionButton(
-        onPressed:() => Navigator.pushNamed(context, MyRoutes.cart),
-        backgroundColor: Colors.black,
-        child: Icon(CupertinoIcons.cart),
-        ),
+      floatingActionButton: VxBuilder(
+        mutations: {AddMutation,RemoveMutation},
+        builder:(context, MyStore, _) => FloatingActionButton(
+          onPressed:() => Navigator.pushNamed(context, MyRoutes.cart),
+          backgroundColor: Colors.black,
+          child: Icon(CupertinoIcons.cart),
+          ).badge(count: _cart.items.length,textStyle: TextStyle(color: Colors.black)),
+      ),
       body:SafeArea(
          child: Container(
           padding: Vx.m20,
@@ -122,7 +129,7 @@ class CatalogItem extends StatelessWidget {
                 buttonPadding: EdgeInsets.zero,
                 children: [
                   "\$${catalog.price}".text.xl.bold.make(),
-                  addToCart(),
+                  AddToCart(catalog:catalog),
                 ],
               ).pOnly(right: 10),
               ],
@@ -134,30 +141,4 @@ class CatalogItem extends StatelessWidget {
   }
 }
 
-class addToCart extends StatefulWidget {
-  const addToCart({
-    super.key,
-  });
 
-  @override
-  State<addToCart> createState() => _addToCartState();
-}
-
-class _addToCartState extends State<addToCart> {
-  bool isAdd=false;
-  @override
-  Widget build(BuildContext context) {
-    return ElevatedButton(onPressed:() {
-      isAdd=isAdd.toggle();
-      setState(() {
-        
-      });
-    }, 
-    style: ButtonStyle(
-      backgroundColor: MaterialStateProperty.all(Colors.black),
-      shape: MaterialStateProperty.all(StadiumBorder()),
-    ),
-    child:isAdd?Icon(Icons.done):"Add".text.make(), 
-    );
-  }
-}

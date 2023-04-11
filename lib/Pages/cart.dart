@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_product_catalog/models/cart_model.dart';
+import 'package:flutter_product_catalog/utils/routes.dart';
 import 'package:flutter_product_catalog/widgets/theme.dart';
 import 'package:velocity_x/velocity_x.dart';
+
+import '../core/store.dart';
 
 class Cart extends StatelessWidget {
   const Cart({super.key});
@@ -26,7 +29,7 @@ class Cart extends StatelessWidget {
   }
 }
 class _cartTotal extends StatelessWidget {
-  final _cart=CartModel();
+  final CartModel _cart=(VxState.store as MyStore).cart;
    _cartTotal({super.key});
   
 
@@ -37,42 +40,50 @@ class _cartTotal extends StatelessWidget {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: [
-          "\$${_cart.totalPrice}".text.xl4.make(),
-          30.widthBox,
-          ElevatedButton(
+          VxConsumer(
+            mutations: {RemoveMutation},
+            builder: (context, MyStore, _) {
+              return "\$${_cart.totalPrice}".text.xl4.make();
+            },
+          ),
+           ElevatedButton(
             onPressed: (){
               ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: "Buying not supported yet".text.make()));
             }, 
             style: ButtonStyle(
-              backgroundColor: MaterialStateProperty.all(Colors.black)
+              backgroundColor: MaterialStateProperty.all(Colors.black),
+              shape: MaterialStateProperty.all(StadiumBorder())
             ),
-            child: "Buy".text.make()).w24(context)
+            child: "Buy".text.make()).w24(context).h4(context)
         ],
       ),
     );
   }
 }
-class _cartList extends StatefulWidget {
-
-  const _cartList({super.key});
-
-  @override
-  State<_cartList> createState() => __cartListState();
-}
-
-class __cartListState extends State<_cartList> {
-  final _cart=CartModel();
+class _cartList extends StatelessWidget{
   @override
   Widget build(BuildContext context) {
-    
-    return ListView.builder(
+    VxState.watch(context, on: [RemoveMutation]);
+    final CartModel _cart=(VxState.store as MyStore).cart;
+    return _cart.items.isEmpty?Column(
+      children: [
+        "Nothing to Show ".text.xl3.make(),
+        TextButton(onPressed: (){
+          Navigator.pushNamed(context, MyRoutes.homeRoute);
+        }, child: "Shop Now".text.make())
+      ],
+    ).py64():ListView.builder(
       itemCount: _cart.items.length,
       itemBuilder:(context, index) => ListTile(
         leading: Icon(Icons.done),
         trailing:IconButton(
-          onPressed: (){},
+          onPressed: (){
+            RemoveMutation(_cart.items[index]);
+            // setState(() {
+              
+            // });
+          },
            icon: Icon(Icons.remove_circle_outline_outlined)),
            title: _cart.items[index].name.text.make(),
       ));
-  }
-}
+  }}

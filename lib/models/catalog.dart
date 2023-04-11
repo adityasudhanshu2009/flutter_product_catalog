@@ -2,6 +2,7 @@
 import 'dart:convert';
 
 class CatalogModel{
+
   static List<Items> items=[];
   //get item by id
   Items getItemById(int id) =>items.firstWhere((element) => element.id==id,orElse: null);
