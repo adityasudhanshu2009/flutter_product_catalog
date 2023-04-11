@@ -3,6 +3,7 @@ import 'package:flutter_product_catalog/utils/routes.dart';
 import 'package:flutter_product_catalog/widgets/theme.dart';
 import 'package:google_fonts/google_fonts.dart';
 
+import 'Pages/cart.dart';
 import 'Pages/home_page.dart';
 import 'Pages/login_page.dart';
 
@@ -17,7 +18,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      themeMode: ThemeMode.light,
+      themeMode: ThemeMode.system,
       theme: MyTheme.lightTheme(context),
       darkTheme: MyTheme.darkTheme(context),
       initialRoute: MyRoutes.homeRoute,
@@ -25,6 +26,7 @@ class MyApp extends StatelessWidget {
         "/":(context)=>LoginPage(),
         MyRoutes.loginRoute:(context) => LoginPage(),
         MyRoutes.homeRoute:(context) => HomePage(),
+        MyRoutes.cart:(context) => Cart(),
 
       },
     );
